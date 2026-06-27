@@ -110,11 +110,16 @@ AMSB 驱动 `reg_top.v` 的译码器：
 
 ```verilog
 // reg_defines.v 中定义
+`define REG_BASE_ADDR   16'h0000
 `define REG_BASE_AMSB   13
 
 // reg_top.v 中使用 —— AMSB 决定用哪几位地址做区域判断
-wire reg_sel_base = (bus_addr[15:`REG_BASE_AMSB] == `REG_BASE_ADDR[15:`REG_BASE_AMSB]);
-//                      bus_addr[15:13]               16'h0000[15:13] = 3'b000
+wire [15:0] dec_base_addr = `REG_BASE_ADDR;
+
+// 通用公式：地址的高位 == 基地址的高位？
+wire reg_sel_base = (bus_addr[15:`REG_BASE_AMSB] == dec_base_addr[15:`REG_BASE_AMSB]);
+//                  bus_addr[15:13]              16'h0000[15:13] = 3'b000
+// 结果：基地址0x0000的高3位是000，bus_addr高3位也是000 → 匹配！选中 reg_base
 ```
 
 改了 `REG_BASE_ADDR` 或 `REG_BASE_AMSB`，译码器**自动适配**，不需要碰 `reg_top.v` 的判断逻辑。
@@ -128,11 +133,17 @@ wire reg_sel_base = (bus_addr[15:`REG_BASE_AMSB] == `REG_BASE_ADDR[15:`REG_BASE_
 2. 0x7000 的二进制 = 0111_0000_0000_0000
    └─┬─┘
    addr[15:12] = 4'b0111
-3. 在 reg_top.v 里加一行：
-   wire reg_sel_xxx = (bus_addr[15:12] == 4'b0111);
+3. 在 reg_defines.v 里加定义：
+   `define REG_XXX_ADDR   16'h7000
+   `define REG_XXX_SIZE   16'h1000
+   `define REG_XXX_AMSB   12
+4. 在 reg_top.v 里加一行译码（AMSB 自动驱动）：
+   wire [15:0] dec_xxx_addr = `REG_XXX_ADDR;
+   wire reg_sel_xxx = (bus_addr[15:`REG_XXX_AMSB] == dec_xxx_addr[15:`REG_XXX_AMSB]);
+   //                   bus_addr[15:12]                 16'h7000[15:12] = 4'b0111
 ```
 
-如果加 8K 的区域（`AMSB = 13`），则偏移用 13 bit，区域选择用 3 bit。
+这就是 AMSB 的好处：**改地址只需改 reg_defines.v 一处**，译码器里的公式是通用的。
 
 ## 总结
 
