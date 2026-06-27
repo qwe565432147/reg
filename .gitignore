@@ -1,0 +1,18 @@
+# Simulation artifacts
+sim/work/
+sim/transcript
+sim/*.vcd
+sim/*.wlf
+
+# ModelSim / Questa
+*.ini
+*.mpf
+*.psp
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.claude/
