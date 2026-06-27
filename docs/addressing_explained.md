@@ -104,11 +104,20 @@ wire  reg_sel_int    = (bus_addr[15:12] == 4'b0110);
    AMSB 往上的位   AMSB-1 往下的位
 ```
 
-### 为什么你在代码里看到它但没被用？
+### 为什么你在代码里看到它且正在被用？
 
-因为写代码的时候定义了这个常量，想着"以后做参数化译码器可能会用到"，但实际上译码器写死了硬编码的比较。所以 `_AMSB` **是死代码，没有任何地方引用它**。
+AMSB 驱动 `reg_top.v` 的译码器：
 
-这正是我把它列在文档里说清楚、然后从代码里删掉的原因。
+```verilog
+// reg_defines.v 中定义
+`define REG_BASE_AMSB   13
+
+// reg_top.v 中使用 —— AMSB 决定用哪几位地址做区域判断
+wire reg_sel_base = (bus_addr[15:`REG_BASE_AMSB] == `REG_BASE_ADDR[15:`REG_BASE_AMSB]);
+//                      bus_addr[15:13]               16'h0000[15:13] = 3'b000
+```
+
+改了 `REG_BASE_ADDR` 或 `REG_BASE_AMSB`，译码器**自动适配**，不需要碰 `reg_top.v` 的判断逻辑。
 
 ## 6. 如果我想加一个 4K 的新区域，怎么算？
 

@@ -132,27 +132,38 @@ module reg_top (
     // =======================================================================
     // Address Decoder
     //
-    //   Each region has a power‑of‑2 aligned block.  The decoder compares
-    //   the upper address bits to determine which region is selected.
+    //   每个区域用 _AMSB 定义译码边界。通用公式：
+    //     reg_sel_xxx = (bus_addr[15:AMSB] == REG_XXX_ADDR[15:AMSB])
     //
-    //   Reg.  Base    Size  Upper Bits     Comparison
-    //   base  0x0000  8K    [15:13]        3'b000
-    //   stat  0x2000  4K    [15:12]        4'b0010
-    //   iic   0x3000  4K    [15:12]        4'b0011
-    //   spi   0x4000  4K    [15:12]        4'b0100
-    //   ft    0x5000  4K    [15:12]        4'b0101
-    //   int   0x6000  4K    [15:12]        4'b0110
-    //   (hole)        4K    [15:12]        4'b0111        ← reserved
-    //   (hole)        32K   [15:15]        1'b1           ← large future block
+    //   这样改 REG_XXX_ADDR 或重新分配区域时，译码器自动跟随，无需手改。
+    //
+    //   Reg.      AMSB  addr[15:AMSB]  base[15:AMSB]
+    //   ───────  ────  ─────────────  ─────────────
+    //   base       13   [15:13] 3bit   3'b000         0x0000
+    //   status     12   [15:12] 4bit   4'b0010         0x2000
+    //   iic        12   [15:12] 4bit   4'b0011         0x3000
+    //   spi        12   [15:12] 4bit   4'b0100         0x4000
+    //   ft         12   [15:12] 4bit   4'b0101         0x5000
+    //   int        12   [15:12] 4bit   4'b0110         0x6000
+    //   (hole)     12   [15:12] 4bit   4'b0111         ← 保留
+    //   (hole)     15   [15]    1bit   1'b1            ← 未来大块
     // =======================================================================
 
-    // -- Select lines (combinatorial) ---------------------------------------
-    wire  reg_sel_base   = (bus_addr[15:13] == 3'b000);
-    wire  reg_sel_status = (bus_addr[15:12] == 4'b0010);
-    wire  reg_sel_iic    = (bus_addr[15:12] == 4'b0011);
-    wire  reg_sel_spi    = (bus_addr[15:12] == 4'b0100);
-    wire  reg_sel_ft     = (bus_addr[15:12] == 4'b0101);
-    wire  reg_sel_int    = (bus_addr[15:12] == 4'b0110);
+    // -- Decode compare values (wire wrappers, Verilog不允许对常量做位选) -------
+    wire [15:0] dec_base_addr   = `REG_BASE_ADDR;
+    wire [15:0] dec_status_addr = `REG_STATUS_ADDR;
+    wire [15:0] dec_iic_addr    = `REG_IIC_ADDR;
+    wire [15:0] dec_spi_addr    = `REG_SPI_ADDR;
+    wire [15:0] dec_ft_addr     = `REG_FT_ADDR;
+    wire [15:0] dec_int_addr    = `REG_INT_ADDR;
+
+    // -- Select lines (combinatorial, AMSB‑driven) --------------------------
+    wire  reg_sel_base   = (bus_addr[15:`REG_BASE_AMSB]   == dec_base_addr[15:`REG_BASE_AMSB]);
+    wire  reg_sel_status = (bus_addr[15:`REG_STATUS_AMSB] == dec_status_addr[15:`REG_STATUS_AMSB]);
+    wire  reg_sel_iic    = (bus_addr[15:`REG_IIC_AMSB]    == dec_iic_addr[15:`REG_IIC_AMSB]);
+    wire  reg_sel_spi    = (bus_addr[15:`REG_SPI_AMSB]    == dec_spi_addr[15:`REG_SPI_AMSB]);
+    wire  reg_sel_ft     = (bus_addr[15:`REG_FT_AMSB]    == dec_ft_addr[15:`REG_FT_AMSB]);
+    wire  reg_sel_int    = (bus_addr[15:`REG_INT_AMSB]    == dec_int_addr[15:`REG_INT_AMSB]);
 
     // -- Any region selected? ------------------------------------------------
     wire  reg_sel_any    = reg_sel_base  | reg_sel_status |
