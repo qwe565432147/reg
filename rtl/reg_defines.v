@@ -29,34 +29,34 @@
 // ============================================================================
 
 // ----- reg_base : Version / Chip-ID / Scratch --------------------------------
+//   8 Kwords  (0x0000 – 0x1FFF) → offset [12:0], decode [15:13]
 `define REG_BASE_ADDR     16'h0000
-`define REG_BASE_SIZE     16'h2000       // 8 Kwords  (0x0000 – 0x1FFF)
-`define REG_BASE_AMSB     13             // upper addr bit for decode
+`define REG_BASE_SIZE     16'h2000
 
 // ----- reg_status : FPGA status & error counters -----------------------------
+//   4 Kwords  (0x2000 – 0x2FFF) → offset [11:0], decode [15:12]
 `define REG_STATUS_ADDR   16'h2000
-`define REG_STATUS_SIZE   16'h1000       // 4 Kwords  (0x2000 – 0x2FFF)
-`define REG_STATUS_AMSB   12
+`define REG_STATUS_SIZE   16'h1000
 
 // ----- reg_iic : I2C controller ---------------------------------------------
+//   4 Kwords  (0x3000 – 0x3FFF) → offset [11:0], decode [15:12]
 `define REG_IIC_ADDR      16'h3000
-`define REG_IIC_SIZE      16'h1000       // 4 Kwords  (0x3000 – 0x3FFF)
-`define REG_IIC_AMSB      12
+`define REG_IIC_SIZE      16'h1000
 
 // ----- reg_spi : SPI controller ---------------------------------------------
+//   4 Kwords  (0x4000 – 0x4FFF) → offset [11:0], decode [15:12]
 `define REG_SPI_ADDR      16'h4000
-`define REG_SPI_SIZE      16'h1000       // 4 Kwords  (0x4000 – 0x4FFF)
-`define REG_SPI_AMSB      12
+`define REG_SPI_SIZE      16'h1000
 
 // ----- reg_ft : Factory / test ----------------------------------------------
+//   4 Kwords  (0x5000 – 0x5FFF) → offset [11:0], decode [15:12]
 `define REG_FT_ADDR       16'h5000
-`define REG_FT_SIZE       16'h1000       // 4 Kwords  (0x5000 – 0x5FFF)
-`define REG_FT_AMSB       12
+`define REG_FT_SIZE       16'h1000
 
 // ----- reg_int : Interrupt controller ---------------------------------------
+//   4 Kwords  (0x6000 – 0x6FFF) → offset [11:0], decode [15:12]
 `define REG_INT_ADDR      16'h6000
-`define REG_INT_SIZE      16'h1000       // 4 Kwords  (0x6000 – 0x6FFF)
-`define REG_INT_AMSB      12
+`define REG_INT_SIZE      16'h1000
 
 // ============================================================================
 // reg_base Register Map  (BASE_ADDR = 0x0000)

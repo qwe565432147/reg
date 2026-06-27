@@ -181,7 +181,9 @@ verilator -f sim/reg_top.f --top reg_top --cc    # 仅编译检查
 
 ## 新手入门
 
-**强烈建议先读这份手把手教程：[docs/reg_slice_guide.md](docs/reg_slice_guide.md)**
+**强烈建议先读：**
+- **地址译码原理** → [docs/addressing_explained.md](docs/addressing_explained.md)（AMSB 是什么、地址怎么分区）
+- **寄存器原语教程** → [docs/reg_slice_guide.md](docs/reg_slice_guide.md)（7 种 slice 怎么用）
 
 它从零开始讲解：
 - 寄存器在软硬件交互中的三种角色
