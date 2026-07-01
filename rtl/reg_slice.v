@@ -40,6 +40,7 @@ module reg_rw #(
     output reg [W-1:0]         rdata
 );
 
+
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             rdata <= INIT;
